@@ -9,19 +9,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+
 @RestController
 public class TempLogger {
 
-	private String dbURL = "jdbc:derby:/home/drussell/Derby_Databases/climate_data;";
+	private String dbURL = "jdbc:derby:/opt/apache/derby_databases/climate_data;";
     private String tableName = null;
     private Connection conn = null;
     
 	@RequestMapping("/log_temp")
-	public void logTemp(@RequestParam(value="tableName") String tableName,@RequestParam(value="temp") String temperature,@RequestParam(value="hum") String humidity,@RequestParam(value="hi") String heatIndex){
+	public void logTemp(@RequestParam(value="tableName") String tableName,@RequestParam(value="temp") double temperature,@RequestParam(value="hum") double humidity,@RequestParam(value="hi") double heatIndex){
 		this.tableName=tableName;
 		createConnection();
-		insertClientRecord(temperature, humidity, heatIndex);
+		TemperatureRecord record = new TemperatureRecord(temperature, humidity, heatIndex);
+		insertClientRecord(record);
 		shutdown();
+	}
+	
+	public void getLastTenOfficeTemps(){
+		
 	}
 	
 	private void createConnection()
@@ -29,33 +36,27 @@ public class TempLogger {
         try
         {
             Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-            //Get a connection
             conn = DriverManager.getConnection(dbURL); 
         }
-        catch (Exception except)
+        catch (Exception e)
         {
-            except.printStackTrace();
+            e.printStackTrace();
         }
     }
 	
-	private void insertClientRecord(String temperature, String humidity, String heatIndex)
+	private void insertClientRecord(TemperatureRecord record)
     {
         try
         {
-        	String query = String.format("INSERT INTO %s (TEMPERATURE,HUMIDITY,HEAT_INDEX,TIMESTAMP) VALUES (?,?,?,CURRENT_TIMESTAMP)",tableName);
+        	String query = String.format("INSERT INTO %s (LOG_DATA,LOG_DATE) VALUES (?,CURRENT_TIMESTAMP)",tableName);
         	PreparedStatement dataUpdate = conn.prepareStatement(query);
-            dataUpdate.setString(1,temperature);
-            dataUpdate.setString(2, humidity);
-            dataUpdate.setString(3, heatIndex);
+            dataUpdate.setString(1,(new Gson()).toJson(record));
             dataUpdate.executeUpdate();
             dataUpdate.clearParameters();
-        	//stmt = conn.createStatement();
-            //stmt.execute("insert into " + tableName + " (TEMPERATURE,HUMIDITY,HEAT_INDEX,TIMESTAMP) values ("+ temperature + "," + humidity + ","+ heatIndex +",CURRENT_TIMESTAMP)");
-            //stmt.close();
         }
-        catch (SQLException sqlExcept)
+        catch (SQLException e)
         {
-            sqlExcept.printStackTrace();
+            e.printStackTrace();
         }
     }
 	
@@ -63,19 +64,15 @@ public class TempLogger {
     {
         try
         {
-            /*if (stmt != null)
-            {
-                stmt.close();
-            }*/
             if (conn != null)
             {
                 DriverManager.getConnection(dbURL + ";shutdown=true");
                 conn.close();
             }           
         }
-        catch (SQLException sqlExcept)
+        catch (SQLException e)
         {
-            
+            e.printStackTrace();
         }
 
     }
