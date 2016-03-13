@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Tue Mar 08 21:55:50 CST 2016:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0153-5984-3760-00000e1e4578 
+Sat Mar 12 22:20:59 CST 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0153-6e34-aeb5-00000e1db390 
 on database directory /home/drussell/apache/derby_databases/climate_data with class loader org.springframework.boot.loader.LaunchedURLClassLoader@12e60a94 
 Loaded from jar:file:/home/drussell/climate-monitoring/logger/target/temp-logger-service-0.1.0.jar!/lib/derby-10.12.1.1.jar!/
 java.vendor=Oracle Corporation
@@ -12,5 +12,5 @@ os.version=3.19.0-51-generic
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Tue Mar 08 21:55:52 CST 2016:
-Shutting down instance a816c00e-0153-5984-3760-00000e1e4578 on database directory /home/drussell/apache/derby_databases/climate_data with class loader org.springframework.boot.loader.LaunchedURLClassLoader@12e60a94 
+Sat Mar 12 22:21:02 CST 2016:
+Shutting down instance a816c00e-0153-6e34-aeb5-00000e1db390 on database directory /home/drussell/apache/derby_databases/climate_data with class loader org.springframework.boot.loader.LaunchedURLClassLoader@12e60a94 

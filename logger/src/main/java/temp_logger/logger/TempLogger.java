@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +27,7 @@ public class TempLogger {
 	public void logTemp(@RequestParam(value="tableName") String tableName,@RequestParam(value="temp") double temperature,@RequestParam(value="hum") double humidity,@RequestParam(value="hi") double heatIndex){
 		this.tableName=tableName;
 		createConnection();
-		TemperatureRecord record = new TemperatureRecord(temperature, humidity, heatIndex);
+		TemperatureRecord record = new TemperatureRecord(temperature, humidity, heatIndex, new Date());
 		insertClientRecord(record);
 		shutdown();
 	}
@@ -48,6 +49,7 @@ public class TempLogger {
             double avgTemp=0.0;
             double avgHum=0.0;
             double avgHeatIndex=0.0;
+            Date timestamp = new Date(2014, 1, 1);
             int count=0;
             
             while(rs.next()){
@@ -55,6 +57,13 @@ public class TempLogger {
             	avgTemp+=tr.getTemperature();
             	avgHum+=tr.getHumidity();
             	avgHeatIndex+=tr.getHeatIndex();
+            	
+            	Date temp = rs.getDate("DATE_RECORDED");
+            	
+            	if(temp!=null && temp.compareTo(timestamp)<0){
+            		timestamp=temp;
+            	}
+            	
             	count++;
             }
             
@@ -62,7 +71,7 @@ public class TempLogger {
             double hum = Math.round((avgHum/count)*100)/100.0;
             double hi = Math.round((avgHeatIndex/count)*100)/100.0;
             
-            TemperatureRecord tempRecord = new TemperatureRecord(temp,hum,hi);
+            TemperatureRecord tempRecord = new TemperatureRecord(temp,hum,hi,timestamp);
             retVal = (new Gson()).toJson(tempRecord);
         }
         catch (SQLException e)
