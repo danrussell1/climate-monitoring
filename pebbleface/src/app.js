@@ -3,7 +3,7 @@ var UI = require('ui');
 
 ajax(
   {
-    url: 'http://98.226.222.143:8181/climate', 
+    url: 'http://192.168.0.109:8181/climate', 
     type: 'json'
   },
   function(data) {
